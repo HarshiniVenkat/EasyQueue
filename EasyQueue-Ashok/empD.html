@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html height="100%">
+<head>
+    <title>Deposition Counter</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style type="text/css">
+        body
+        {
+            background-color:#eb6b0f;
+        } 
+        img
+        {
+            position:relative;
+            height:200px;
+            width:75%;
+            left:13%;
+        }  
+        h1{
+            margin-left: -4%;
+
+            font-size: 40px;
+            text-align:center;
+            font-family: Palatino Linotype;
+            font-style: Bold Italic;
+            color: #FFFFFF;
+        }
+        input
+         {
+             padding: 15px;
+             margin: 5px 0 22px 0;
+             display: inline-block;
+             border: none;
+             height:10%;
+             width:100%;
+             box-sizing: border-box;
+             background: #f1f1f1;
+        }
+
+        #btn1{
+            color: white;
+            position: relative;
+            left:45%;
+            margin-top:1%;
+            padding: 15px 45px;
+            text-align: center;
+            font-size: 20px;
+            background-color: #4CAF50;
+        }
+        #btn2{
+            color: white;
+            position: relative;
+            left:-17%;
+            margin-top:1%;
+            padding: 15px 45px;
+            text-align: center;
+            font-size: 22px;
+            background-color: #4CAF50;
+        }
+        #btn3
+        {
+            color: white;
+            position: relative;
+            left:1%;
+            margin-top:2%;
+            padding: 15px 45px;
+            text-align: center;
+            font-size: 23px;
+            background-color: #4CAF50;
+        }
+        .container 
+        {
+            padding: 16px;
+            background-color: white;
+            width:650px;
+            height:350px;
+            margin-left: 25%;
+            margin-top: 1%;
+        }
+        .registerbtn 
+        {
+            border: none;
+            cursor: pointer;
+            opacity: 0.9;
+        }
+        .registerbtn:hover
+         {
+            opacity: 1;
+         }
+        label
+        {
+            font-size:25px;
+        }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script>
+      $(function () {
+
+        $('form').on('submit', function (e) {
+
+          e.preventDefault();
+
+          $.ajax({
+            type: 'post',
+            url: 'contersms.php',
+            data: $('form').serialize(),
+            success: function () {
+              
+            }
+          });
+
+        });
+
+      });
+    </script>
+
+</head>
+    
+
+<body>
+    <header>
+        <img src="logo.png" alt="Logo" />
+    </header>
+    <h1>Deposition Counter A</h1>
+    <div class="container">
+    <form>
+            <label for="name"><b>Name:</b></label><br  />
+
+            <input type="text" name="name" length="100" id="name"><br  />
+            <label for="mobile"><b>Mobile:</b></label><br  />
+
+            <input type="tel" name="mobile" id="mobile"><br  />
+
+            <label for="token"><b>Token:</b></label><br  />
+
+            <input type="text" name="token"  id="token"><br  />
+
+<button id="btn3" name="sendsms" class="registerbtn">send sms</button>
+
+
+</form>
+<button id="btn1" class="registerbtn" name="finish" onclick="finish()">Finished</button>
+<button id="btn2" class="registerbtn" name="callnext" onclick="call()">Call next</button>
+
+</div>
+<script src="/__/firebase/6.4.0/firebase-app.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.4.0/firebase.js"></script>
+<script>
+  var config = {
+    apiKey: "AIzaSyC7EAYyPO0OLturqz5hYIxInRhwzqh_tWw",
+    authDomain: "easyqueue-8d182.firebaseapp.com",
+    databaseURL: "https://easyqueue-8d182.firebaseio.com",
+    storageBucket: "gs://easyqueue-8d182.appspot.com"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script>
+    
+   
+   function call()
+    {
+        
+    var today = new Date();
+  
+    var time1=today.getTime();
+    var empcall= firebase.database().ref('AshokNagar/Clients/Deposition').limitToFirst(1);
+    empcall.once('value', function(snap)
+   {
+        snap.forEach(function(child) {
+        var firstItem = child.val();  
+        var n=firstItem.mobile; 
+        var t=firstItem.time;
+        document.getElementById("name").value=firstItem.name;
+        document.getElementById("mobile").value=firstItem.mobile;
+        document.getElementById("token").value=firstItem.token;    
+        var up=firebase.database().ref('AshokNagar/Time/'+n);
+        up.update({
+            arrivaltime: t,
+            calltime: time1
+                });
+        });
+    });
+    
+}
+    function finish()
+    {
+        var today = new Date();
+        
+        var time1=today.getTime();
+        var empcall= firebase.database().ref('AshokNagar/Clients/Deposition').limitToFirst(1);
+        empcall.once('value', function(snap)
+        {
+        snap.forEach(function(child1)
+        {
+        var firstItem = child1.val();  
+        var n=firstItem.mobile; 
+        var up=firebase.database().ref('AshokNagar/Time/'+n);
+        up.update({
+            finishtime: time1
+                });
+        Calculate(n);
+       
+        });
+        });
+        var path1=firebase.database().ref('AshokNagar/DoneToken/Deposition');
+        path1.once('value',function(snapshot)
+        {
+        count=parseInt(snapshot.val())+1;
+        path1.set(count);
+        var path2=firebase.database().ref('AshokNagar/Clients/Deposition/').child(count);
+        path2.remove();
+        
+        });  
+        window.alert("Cleared!");  
+    }
+function Calculate(n)
+{
+    var wait=0;
+    var service=0;
+    var arrival;
+    var call;
+    var entry;
+    var finish;
+    
+    var total=0;
+    var up=firebase.database().ref('AshokNagar/Time/'+n);
+    up.once('value',function(snapshot)
+    {
+        var item=snapshot.val();
+        arrival=item.arrivaltime;
+        call=item.calltime;
+        entry=item.entry;
+        finish=item.finishtime;
+        wait=parseInt(call)-parseInt(arrival);
+        service=parseInt(finish)-parseInt(entry);
+        total=(wait+service)/(1000*60);
+        up.update({
+            totaltime:total+' min'
+        });
+        var tref=firebase.database().ref('AshokNagar/Turnaround/');
+        tref.once('value',function(snap)
+        {
+            var a=snap.val();
+            var pt=a.total;
+            var oc=a.count;
+            var nc=oc+1;
+            var nt=pt+total;
+            var turn=nt/nc;
+            tref.update({
+                total: nt,
+                count: nc,
+                tt: turn
+            });
+        var ashok=firebase.database().ref('Branches/');
+        ashok.once('value',function(snap1)
+        {
+            ashok.update({
+                AshokNagar:turn
+            });
+        });
+        });
+
+});
+}
+    
+
+</script>
+</body>
+</html>
+

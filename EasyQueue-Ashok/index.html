@@ -1,0 +1,471 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+	<title>Query form</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+	<style>
+
+		body
+
+		{
+
+			background-color:#eb6b0f;
+
+		}
+
+		
+
+		img
+
+		{
+
+			position:relative;
+
+			height:200px;
+
+			width:75%;
+
+			left:150px;
+
+		}
+
+		h1
+
+		{
+
+			
+
+			font-size: 40px;
+
+			text-align:center;
+
+			font-family: Palatino Linotype;
+
+			font-style: Bold Italic;
+
+			color: #FFFFFF;
+
+		}
+
+		h3
+
+		{
+
+			
+
+			font-size: 20px;
+
+			text-align:center;
+
+			font-family: Palatino Linotype;
+
+			font-style: Bold Italic;
+
+			color: #FFFFFF;
+
+
+
+		}
+
+		
+
+		button
+
+		{
+
+			position:relative;
+
+			top:150px;
+
+			left:200px;
+
+			padding: 10px 40px;
+
+    		text-align: center;
+
+		}
+
+		td
+
+		{
+
+
+
+		position:relative;
+
+		font-family:Franklin Gothic;
+
+		font-size: 30px;
+
+		color:#FFFFFF;
+
+		top:20px;
+
+
+
+		}
+
+		.container 
+
+		{
+
+  			padding: 16px;
+
+  			background-color: white;
+
+  			width:50%;
+
+  			height:500px;
+
+  			margin-left: 25%;
+
+ 			margin-top: 40px;
+
+		}
+
+		input,select
+
+		 {
+
+ 			
+
+ 			 padding: 15px;
+
+  			 margin: 5px 0 22px 0;
+
+			 display: inline-block;
+
+  			 border: none;
+
+  			 height:10%;
+
+  			 width:100%;
+
+  			 box-sizing: border-box;
+
+  			 background: #f1f1f1;
+
+		}
+
+		label
+
+		{
+
+			font-size:25px;
+
+		}
+
+		option
+
+		{
+
+			font-size:16px;
+
+		}
+		#result
+		{
+			background-color: white;
+			height: 0px;
+			padding: 0px;
+
+  			 margin: 0px 0 0px 0;
+
+
+		}
+		#nop
+		{
+			background-color: white;
+			height: 0px;
+			padding: 0px;
+
+  			 margin: 0px 0 0px 0;
+		}
+		.registerbtn 
+
+		{
+
+  			background-color: #4CAF50;
+
+  			color: white;
+
+  			padding: 16px 20px;
+
+  			margin: 8px 0;
+
+  			border: none;
+
+  			cursor: pointer;
+
+  			width: 100%;
+
+  			opacity: 0.9;
+
+  			position:relative;
+
+  			left:0px;
+
+  			top:10px;
+
+		}
+
+
+
+		.registerbtn:hover
+
+		 {
+
+  			opacity: 1;
+
+		 }
+
+	</style>
+
+</head>
+
+<body>
+
+	<header>
+
+    	<img src="logo.png" alt="Logo" />
+
+    </header>
+
+    <section>
+
+    	<h1>Welcome to Syndicate Bank</h1>
+
+    	<h3>Please fill in the form below to get your token number</h3>
+
+    	<form onsubmit="done()" action="sms.php" method="POST">
+
+    		<div class="container">
+
+			<label for="name"><b>Name:</b></label><br  />
+
+			<input type="text" name="name" length="100" id="name"><br  />
+
+    		<label for="purpose"><b>Purpose Of Visit:</b></label><br  />
+
+    		<select name="purpose" id="purpose">
+
+    			<option value="New_Account">New Account</option>
+
+    			<option value="Loan">Loan Availment</option>
+
+    			<option value="Withdraw">Cash Withdrawal</option>
+
+    			<option value="Deposition">Deposition</option>
+
+    		</select><br  />
+
+    		
+
+    		<label for="mobile"><b>Mobile:</b></label><br  />
+
+    		<input type="tel" name="mobile" required id="mobile"><br  />
+
+    		
+    		<input type="text" name="result"  id="result"><br  />
+    		<input type="text" name="nop" id="nop"><br />
+
+    		<input type="submit" class="registerbtn" value="Get token number"></input>
+
+   		</div>
+
+   		</form>
+
+    </section>
+
+	
+<script src="/__/firebase/6.4.0/firebase-app.js"></script>
+<script src="/__/firebase/init.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.4.0/firebase.js"></script>
+<script>
+  var config = {
+    apiKey: "AIzaSyC7EAYyPO0OLturqz5hYIxInRhwzqh_tWw",
+    authDomain: "easyqueue-8d182.firebaseapp.com",
+    databaseURL: "https://easyqueue-8d182.firebaseio.com",
+    storageBucket: "gs://easyqueue-8d182.appspot.com"
+  };
+  firebase.initializeApp(config);
+
+  
+</script>
+<script>
+	var database = firebase.database();
+	var account_token;
+	var loan_token;
+	var deposition_token;
+	var withdraw_token;
+	
+	function done()
+	{
+    var name=document.getElementById("name").value;
+	var purpose=document.getElementById("purpose");
+	var pvalue=purpose.options[purpose.selectedIndex].value;
+	var mobile=document.getElementById("mobile").value;
+	var today = new Date();
+	var time = today.getTime();
+
+	if(pvalue=="New_Account")
+	{
+
+		var naref=firebase.database().ref('AshokNagar/Token/').child(pvalue);
+		naref.once('value',function(snapshot){
+				account_token=parseInt(snapshot.val())+1;
+				firebase.database().ref('AshokNagar/Clients/').child(pvalue).child(account_token).set({
+			token: "NA"+account_token,
+			name: name,
+			number: account_token,
+  			purpose: pvalue,
+  			mobile: mobile,
+  			time: time});
+  			naref.set(account_token);
+  			var msg="NA"+account_token;
+ 			document.getElementById("result").value=msg;
+ 				var num;
+ 				var mref=firebase.database().ref('AshokNagar/Clients/').child(pvalue).limitToFirst(1);
+ 				mref.once('value',function(snap)
+ 				{
+ 					snap.forEach(function(child)
+ 					{
+ 						 var y=child.val();
+ 						 num=parseInt(y.number);
+ 						 var a=account_token-num;
+ 				document.getElementById("nop").value=a;
+
+ 					});
+ 				});
+		    });
+		
+
+		
+	}
+	else if(pvalue=="Loan")
+	{
+		var lref=firebase.database().ref('AshokNagar/Token/').child(pvalue);
+		lref.once('value',function(snapshot){
+			loan_token=parseInt(snapshot.val())+1;
+			firebase.database().ref('AshokNagar/Clients/').child(pvalue).child(loan_token).set({
+			token: "L"+loan_token,
+			name: name,
+			number: loan_token,
+  			purpose: pvalue,
+  			mobile: mobile,
+  			time: time});
+  			lref.set(loan_token);
+  			var msg="L"+loan_token;
+ 				document.getElementById("result").value=msg;
+ 				var num;
+ 				var mref=firebase.database().ref('AshokNagar/Clients/').child(pvalue).limitToFirst(1);
+ 				mref.once('value',function(snap)
+ 				{
+ 					snap.forEach(function(child)
+ 					{
+ 						 var y=child.val();
+ 						 num=parseInt(y.number);
+ 						 var a=loan_token-num;
+ 				document.getElementById("nop").value=a;
+
+ 					});
+ 					
+ 					
+ 				});
+
+		});
+		
+		
+		
+	}
+	else if(pvalue=="Withdraw")
+	{
+		var wref=firebase.database().ref('AshokNagar/Token/').child(pvalue);
+		wref.once('value',function(snapshot){
+			withdraw_token=parseInt(snapshot.val())+1;
+			firebase.database().ref('AshokNagar/Clients/').child(pvalue).child(withdraw_token).set({
+			token: "W"+withdraw_token,
+			name: name,
+			number: withdraw_token,
+  			purpose: pvalue,
+  			mobile: mobile,
+  			time: time});
+  			wref.set(withdraw_token);
+  			var msg="W"+withdraw_token;
+ 				document.getElementById("result").value=msg;
+			var num;
+ 				var mref=firebase.database().ref('AshokNagar/Clients/').child(pvalue).limitToFirst(1);
+ 				mref.once('value',function(snap)
+ 				{
+ 					snap.forEach(function(child)
+ 					{
+ 						 var y=child.val();
+ 						 num=parseInt(y.number);
+ 						 var a=withdraw_token-num;
+ 				document.getElementById("nop").value=a;
+
+ 					});
+ 					
+ 					
+ 				});
+
+		});
+		
+		
+	}
+	else if(pvalue="Deposition")
+	{
+		var dref=firebase.database().ref('AshokNagar/Token/').child(pvalue);
+		dref.once('value',function(snapshot){
+			deposition_token=parseInt(snapshot.val())+1;
+			firebase.database().ref('AshokNagar/Clients/').child(pvalue).child(deposition_token).set({
+			token: "D"+deposition_token,
+			number: deposition_token,
+			name: name,
+  			purpose: pvalue,
+  			mobile: mobile,
+  			time: time});
+  			dref.set(deposition_token);
+  			var msg="D"+deposition_token;
+ 			document.getElementById("result").value=msg;
+ 			var num;
+ 			var mref=firebase.database().ref('AshokNagar/Clients/').child(pvalue).limitToFirst(1);
+ 			mref.once('value',function(snap)
+ 				{
+ 					snap.forEach(function(child)
+ 					{
+ 						 var y=child.val();
+ 						 num=parseInt(y.number);
+ 						 var a=deposition_token-num;
+ 				document.getElementById("nop").value=a;
+
+ 					});
+ 					
+ 					
+ 				});
+ 				
+ 				
+		});
+		
+		
+		
+		
+	}
+	window.alert("Confirm?");
+
+	}
+</script>
+
+
+</body>
+
+</html>

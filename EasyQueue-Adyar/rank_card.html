@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  #main
+
+    {
+
+      position:relative;
+
+      height:200px;
+
+      width:75%;
+
+      left:150px;
+
+    }
+    
+    body
+
+    {
+
+      background-color:#eb6b0f;
+
+    }
+* {
+  box-sizing: border-box;
+}
+
+
+
+/* Float four columns side by side */
+.column {
+  float: left;
+  width: 25%;
+  padding: 0 10px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.row {margin: 0 -5px;}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
+}
+
+/* Style the counter cards */
+.card {
+  width: 90%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  text-align: center;
+  background-color: #f1f1f1;
+}
+h1
+{
+  font-size: 40px;
+
+      text-align:center;
+
+      font-family: Palatino Linotype;
+
+      font-style: Bold Italic;
+
+      color: #FFFFFF;
+}
+#anna
+{
+  height: 168px;
+}
+</style>
+</head>
+<body>
+
+<header>
+
+      <img id="main" src="logo.png" alt="Logo" />
+
+    </header>
+<h1>Branch Ranking</h1>
+<div class="row" style="margin-left: 20px;">
+  <div class="column">
+    <div class="card">
+      <img id="anna" src="anna_nagar.jpg" alt="Avatar" style="width:100%">
+      <h2><b>#Rank 1</b></h2> 
+    <h3><b>Anna Nagar, Chennai</b></h3> 
+    </div>
+  </div>
+
+  <div class="column">
+    <div class="card">
+      <img src="egmore.jpg" alt="Avatar" style="width:100%">
+      <h2><b>#Rank 2</b></h2> 
+    <h3><b>Egmore, Chennai</b></h3> 
+    </div>
+  </div>
+  
+  <div class="column">
+    <div class="card">
+      <img id="anna" src="velachery.jpg" alt="Avatar" style="width:100%">
+      <h2><b>#Rank 3</b></h2> 
+    <h3><b>Velachery, Chennai</b></h3> 
+    </div>
+  </div>
+  
+  <div class="column">
+    <div class="card">
+      <img src="mylapore.jpg" alt="Avatar" style="width:100%">
+      <h2><b>#Rank 4</b></h2> 
+    <h3><b>Mylapore, Chennai</b></h3> 
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
